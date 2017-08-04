@@ -15,73 +15,63 @@ use Symfony\Component\HttpFoundation\Request;
 class GitHutController extends Controller
 {
     /**
-     * @Route("/", name="githut")
+     * @Route("/{username}", name="githut", defaults={"username": "codereviewvideos"})
      */
-    public function githutAction(Request $request)
+    public function githutAction(Request $request, $username)
     {
+        $client = new \GuzzleHttp\Client();
+        $response = $client->request('GET', 'https://api.github.com/users/' . $username);
+
+        $data = json_decode($response->getBody()->getContents(), true);
 
         return $this->render('githut/index.html.twig', [
-            'avatar_url' => 'https://avatars2.githubusercontent.com/u/12968163?v=4',
-            'name' => 'Code Review Videos',
-            'login' => 'codereviewvideos',
-            'details' => [
-                'company' => 'Code Review Videos',
-                'location' => 'Preston, UK',
-                'joined_on' => 'Joined 25th Jue 2017'
+//            'username'   => $username,
+            'avatar_url' => $data['avatar_url'],
+            'name'       => $data['name'],
+            'login'      => $data['login'],
+            'details'    => [
+                'company'   => $data['company'],
+                'location'  => $data['location'],
+                'joined_on' => 'Joined on ' . (new \DateTime($data['created_at']))->format('d m Y')
             ],
-            'blog' => 'blog: https://codereviewvideos.com/',
+            'blog'        => $data['blog'],
             'social_data' => [
-                'Public_repos' => '39',
-                'Followers' => '51',
-                'Following' => '1'
+                'Public Repos' => $data['public_repos'],
+                'Followers'    => $data['followers'],
+                'Following'    => $data['following']
             ],
             'repo_count' => 100,
             'most_stars' => 67,
             'repos' => [
                 [
-                    'name' => 'some repository',
-                    'url' => 'https://api.github.com/users/codereviewvideos',
+                    'name'             => 'some repository',
+                    'url'              => 'https://api.github.com/users/codereviewvideos',
                     'stargazers_count' => 46,
-                    'description' => 'learn symfony 1'
+                    'description'      => 'learn symfony 1'
                 ],
                 [
-                    'name' => 'some kind of repository',
-                    'url' => 'https://api.github.com/users/codereviewvideoss',
+                    'name'             => 'some kind of repository',
+                    'url'              => 'https://api.github.com/users/codereviewvideoss',
                     'stargazers_count' => 47,
-                    'description' => 'learn symfony 2'
+                    'description'      => 'learn symfony 2'
                 ],
                 [
-                    'name' => 'some repositories',
-                    'url' => 'https://api.github.com/users/codereviewvideossss',
+                    'name'             => 'some repositories',
+                    'url'              => 'https://api.github.com/users/codereviewvideossss',
                     'stargazers_count' => 48,
-                    'description' => 'learn symfony 3'
+                    'description'      => 'learn symfony 3'
                 ]
             ]
         ]);
     }
 
+    /**
+     * @Route("/profile/{username}", name="profile")
+     */
+    public function profileAction(Request $request, $username)
+    {
+        $profileData = $this->get('github_api')->getProfile($username);
 
-//    /**
-//     * @Route("/profile", name="profile")
-//     */
-//    public function profileAction(Request $request)
-//    {
-//
-//        return $this->render('githut/profile.html.twig', [
-//            'avatar_url' => 'https://avatars2.githubusercontent.com/u/12968163?v=4',
-//            'name' => 'Code Review Videos',
-//            'login' => 'codereviewvideos',
-//            'details' => [
-//                'company' => 'Code Review Videos',
-//                'location' => 'Preston, UK',
-//                'joined_on' => 'Joined 25th Jue 2017'
-//            ],
-//            'blog' => 'blog: https://codereviewvideos.com/',
-//            'social_data' => [
-//                'Public_repos' => '39',
-//                'Followers' => '51',
-//                'Following' => '1'
-//            ]
-//        ]);
-//    }
+        return $this->render('githut/profile.html.twig', $profileData);
+    }
 }
