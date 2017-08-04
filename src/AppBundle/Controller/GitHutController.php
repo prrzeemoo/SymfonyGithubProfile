@@ -34,6 +34,28 @@ class GitHutController extends Controller
                 'Public_repos' => '39',
                 'Followers' => '51',
                 'Following' => '1'
+            ],
+            'repo_count' => 100,
+            'most_stars' => 67,
+            'repos' => [
+                [
+                    'name' => 'some repository',
+                    'url' => 'https://api.github.com/users/codereviewvideos',
+                    'stargazers_count' => 46,
+                    'description' => 'learn symfony 1'
+                ],
+                [
+                    'name' => 'some kind of repository',
+                    'url' => 'https://api.github.com/users/codereviewvideoss',
+                    'stargazers_count' => 47,
+                    'description' => 'learn symfony 2'
+                ],
+                [
+                    'name' => 'some repositories',
+                    'url' => 'https://api.github.com/users/codereviewvideossss',
+                    'stargazers_count' => 48,
+                    'description' => 'learn symfony 3'
+                ]
             ]
         ]);
     }
